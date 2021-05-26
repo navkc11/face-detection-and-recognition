@@ -20,7 +20,7 @@
                HorizontalContentAlignment="Center"
                Background="#FFF93307"
                VerticalAlignment="Bottom" 
-               Height="45" FontSize="22" Foreground="White"/>
+               Height="45" FontSize="22" Foreground="White" Content=""/>
         <Image x:Name="imgDetectFace" 
                HorizontalAlignment="Right" 
                Height="150" 

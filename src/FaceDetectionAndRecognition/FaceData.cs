@@ -6,9 +6,8 @@ namespace FaceDetectionAndRecognition
 {
     class FaceData
     {
+        public string TZ { get; set; }
         public string PersonName { get; set; }
-        public Image<Gray, byte> FaceImage { get; set; }
-        public DateTime CreateDate { get; set; }
-      
+        public Image<Gray, byte> FaceImage { get; set; }      
     }
 }

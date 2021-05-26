@@ -14,10 +14,15 @@ using System.Runtime.CompilerServices;
 using Emgu.CV.Face;
 using Emgu.CV.Util;
 using Microsoft.Win32;
+using FireSharp.Interfaces;
+using FireSharp.Config;
+using FireSharp.Response;
+
 
 namespace FaceDetectionAndRecognition
 {
 
+    
     public partial class WFFaceRecognition : Window, INotifyPropertyChanged
     {
         #region Properties
@@ -34,14 +39,19 @@ namespace FaceDetectionAndRecognition
         private EigenFaceRecognizer recognizer;
         private Timer captureTimer;
         #region FaceName
-        private string faceName;
-        public string FaceName
+        private string faceTz;
+        public string FaceTz
         {
-            get { return faceName; }
+            get { return faceTz; }
             set
             {
-                faceName = value.ToUpper();
-                lblFaceName.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => { lblFaceName.Content = faceName; }));
+                //var result = client.Get("Users/" + txtId.Text);
+                //FaceData user = result.ResultAs<FaceData>();
+                faceTz = value; // value - ערך משורה 285 FaceTz = nameList[result.Label]
+                var result = client.Get("User/" + faceTz);
+                //FaceData user = result.ResultAs<FaceData>();
+                //User user = result.ResultAs<User>();
+                lblFaceName.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => { lblFaceName.Content = faceTz; }));
                 NotifyPropertyChanged();
             }
         }
@@ -86,6 +96,13 @@ namespace FaceDetectionAndRecognition
             };
             captureTimer.Elapsed += CaptureTimer_Elapsed;
         }
+        IFirebaseConfig fcon = new FirebaseConfig()
+        {
+            AuthSecret = "yfAOROgj22FDDAsmRD8b5BeFWUBr95oiOkPfTsut",
+            BasePath = "https://face-detection-1fc7d-default-rtdb.firebaseio.com/"
+        };
+
+        IFirebaseClient client;
         #endregion
 
         #region Event
@@ -96,6 +113,14 @@ namespace FaceDetectionAndRecognition
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                client = new FireSharp.FirebaseClient(fcon);
+            }
+            catch
+            {
+                MessageBox.Show("There's a problem");
+            }
             GetFacesList();
             videoCapture = new VideoCapture(Config.ActiveCameraIndex);
             videoCapture.SetCaptureProperty(CapProp.Fps, 30);
@@ -124,7 +149,14 @@ namespace FaceDetectionAndRecognition
             detectedFace.Save(Config.FacePhotosPath +"face"+ (faceList.Count + 1) + Config.ImageFileExtension);
             StreamWriter writer = new StreamWriter(Config.FaceListTextFile, true);
             string personName = Microsoft.VisualBasic.Interaction.InputBox("Your Name");
-            writer.WriteLine(String.Format("face{0}:{1}", (faceList.Count + 1), personName));
+            string tz = Microsoft.VisualBasic.Interaction.InputBox("Your Teudat Zehut");
+            writer.WriteLine(String.Format("face{0}:{1}", (faceList.Count + 1), tz));
+            FaceData user = new FaceData()
+            {
+                TZ = tz,
+                PersonName = personName,
+            };
+            var setter = client.Set("User/" + String.Format(tz), user);
             writer.Close();
             GetFacesList();
             MessageBox.Show("Successful.");
@@ -192,13 +224,13 @@ namespace FaceDetectionAndRecognition
                 string[] lineParts = line.Split(':');
                 faceInstance = new FaceData();
                 faceInstance.FaceImage = new Image<Gray, byte>(Config.FacePhotosPath + lineParts[0] + Config.ImageFileExtension);
-                faceInstance.PersonName = lineParts[1];
+                faceInstance.TZ = lineParts[1];
                 faceList.Add(faceInstance);
             }
             foreach (var face in faceList)
             {
                 imageList.Push(face.FaceImage.Mat);
-                nameList.Add(face.PersonName);
+                nameList.Add(face.TZ);
                 labelList.Push(new[] { i++ });
             }
             reader.Close();
@@ -225,7 +257,7 @@ namespace FaceDetectionAndRecognition
                     Rectangle[] faces = haarCascade.DetectMultiScale(grayframe, 1.2, 10, new System.Drawing.Size(50, 50), new System.Drawing.Size(200, 200));
 
                     //detect face
-                    FaceName = "No face detected";
+                    FaceTz = "No face detected";
                     foreach (var face in faces)
                     {
                         bgrFrame.Draw(face, new Bgr(255, 255, 0), 2);
@@ -251,12 +283,13 @@ namespace FaceDetectionAndRecognition
             {
                 //Eigen Face Algorithm
                 FaceRecognizer.PredictionResult result = recognizer.Predict(detectedFace.Resize(100, 100, Inter.Cubic));
-                FaceName = nameList[result.Label]; 
+                FaceTz = nameList[result.Label]; //פה מכניסים למשתנה את הערך מהרשימה (nameList[result.Label])
+                var fbTZ = client.Get("User/" + nameList[result.Label]);
                 CameraCaptureFace = detectedFace.ToBitmap();
             }
             else
             {
-                FaceName = "Please Add Face";
+                FaceTz = "Please Add Face";
             }
         }
         /// <summary>
