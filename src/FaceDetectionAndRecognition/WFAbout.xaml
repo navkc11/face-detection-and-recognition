@@ -6,14 +6,8 @@
       xmlns:local="clr-namespace:FaceDetectionAndRecognition"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="500"
-      Title="About" ResizeMode="NoResize" 
+      Title="Edit Name" ResizeMode="NoResize" 
         SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" IsEnabled="True">
 
-    <Grid>
-
-        <Label x:Name="lblDeveloper" Content="It was developed by Mesut Pişkin" HorizontalAlignment="Center" Margin="69,82,49,137" VerticalAlignment="Center" Height="52" FontSize="25"/>
-        <Label x:Name="lblContact" Content="mesutpiskin@outlook.com www.mesutpiskin.com" HorizontalAlignment="Center" Margin="56,139,36,80" VerticalAlignment="Center" Height="52" FontSize="18" Cursor="IBeam" IsEnabled="False"/>
-        <Label x:Name="lblPowered" Content="EmguCV, Csharp WPF APP" HorizontalAlignment="Center" Margin="56,196,62,23" VerticalAlignment="Center" Height="52" FontSize="25" Foreground="Red"/>
-
-    </Grid>
+    <Grid/>
 </Window>

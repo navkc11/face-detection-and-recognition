@@ -93,7 +93,6 @@
     </ApplicationDefinition>
     <Compile Include="Config.cs" />
     <Compile Include="FaceData.cs" />
-    <Compile Include="User.cs" />
     <Compile Include="WFAbout.xaml.cs">
       <DependentUpon>WFAbout.xaml</DependentUpon>
     </Compile>

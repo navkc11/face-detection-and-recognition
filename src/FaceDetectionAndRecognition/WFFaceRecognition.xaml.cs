@@ -46,9 +46,9 @@ namespace FaceDetectionAndRecognition
             set
 
 
-            {   //פה אנחנו עושים בדיקה אם פנים תז לא מופיע אצלו את שתיי המשפטים 
-                //אז תלך לפייר בייס ותימצא לפי התעודת זהות שיש ברשימה את השם שנימצא עם התעודת זהות
-                // שמצא לפי הפנים וכך מקבלים את אותו תעודת זהות
+            {   /*פה אנחנו עושים בדיקה אם פנים תז לא מופיע אצלו את שתיי המשפטים 
+                אז תלך לפייר בייס ותימצא לפי התעודת זהות שיש ברשימה את השם שנימצא עם התעודת זהות
+                שמצא לפי הפנים וכך מקבלים את אותו תעודת זהות*/
                 faceTz = value; // value - ערך משורה 285 FaceTz = nameList[result.Label]
                 if (faceTz == "Please Add Face" || faceTz == "No face detected")
                 {
@@ -58,9 +58,9 @@ namespace FaceDetectionAndRecognition
                 else
                 {
                     var result = client.Get("User/" + faceTz);
-                    User user = result.ResultAs<User>();
+                    FaceData user = result.ResultAs<FaceData>();
                     lblFaceName.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => { lblFaceName.Content = user.PersonName; }));
-                    NotifyPropertyChanged();
+                    NotifyPropertyChanged();//מוודא שלא הוכנס ערך NULL
                 }
             }
         }
@@ -141,7 +141,7 @@ namespace FaceDetectionAndRecognition
         {
             ProcessFrame();
         }
-        private void AboutButton_Click(object sender, RoutedEventArgs e)
+        private void EditName_Click(object sender, RoutedEventArgs e)
         {
             WFAbout wfAbout = new WFAbout();
             wfAbout.ShowDialog();
@@ -156,17 +156,17 @@ namespace FaceDetectionAndRecognition
             //Save detected face
             detectedFace = detectedFace.Resize(100, 100, Inter.Cubic);
             detectedFace.Save(Config.FacePhotosPath + "face" + (faceList.Count + 1) + Config.ImageFileExtension);
-            StreamWriter writer = new StreamWriter(Config.FaceListTextFile, true);
-            string personName = Microsoft.VisualBasic.Interaction.InputBox("Your Name");
-            string tz = Microsoft.VisualBasic.Interaction.InputBox("Your Teudat Zehut");
-            writer.WriteLine(String.Format("face{0}:{1}", (faceList.Count + 1), tz));
+            StreamWriter writer = new StreamWriter(Config.FaceListTextFile, true);//מוודא שיש קובץ טקסט עם השות ואם לא הוא מייצר אותו
+            string personName = Microsoft.VisualBasic.Interaction.InputBox("Your Name");//קולט ושומר את שם המשתמש בתור סטרינג
+            string tz = Microsoft.VisualBasic.Interaction.InputBox("Your Teudat Zehut");//קולט ושומר את ת.ז של המשתמש בתור סטרינג
+            writer.WriteLine(String.Format("face{0}:{1}", (faceList.Count + 1), tz));// כותב למעבד תמלילים את מספר הפנים ואת הת.ז הרלוונטי
+            writer.Close(); // סוגר את מעבד התמלילים
             FaceData user = new FaceData()
             {
                 TZ = tz,
                 PersonName = personName,
             };
-            var setter = client.Set("User/" + String.Format(tz), user);
-            writer.Close();
+            var setter = client.Set("User/" + String.Format(tz), user); // מעלה את נתוני המשתמש לפייר בייס (שומר לפי ת.ז) י
             GetFacesList();
             MessageBox.Show("Successful.");
         }
@@ -291,9 +291,8 @@ namespace FaceDetectionAndRecognition
             if (imageList.Size != 0)
             {
                 //Eigen Face Algorithm
-                FaceRecognizer.PredictionResult result = recognizer.Predict(detectedFace.Resize(100, 100, Inter.Cubic));
-                FaceTz = nameList[result.Label]; //פה מכניסים למשתנה את הערך מהרשימה (nameList[result.Label])
-                var fbTZ = client.Get("User/" + nameList[result.Label]);//באן אנו מעלים את התעודת זהות לתוך הפייר בייס
+                FaceRecognizer.PredictionResult result = recognizer.Predict(detectedFace.Resize(100, 100, Inter.Cubic)); //מגדיר משתנה ששווה לפנים שזוהו
+                FaceTz = nameList[result.Label]; //פה מכניסים למשתנה את הת.ז מהרשימה ונכנסים לפונקציה (nameList[result.Label]) 
                 CameraCaptureFace = detectedFace.ToBitmap();
             }
             else

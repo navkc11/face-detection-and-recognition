@@ -33,9 +33,10 @@
               VerticalAlignment="Top" 
               Width="Auto" 
               Background="{x:Null}" >
-            <MenuItem Cursor="Hand" Header="About" Click="AboutButton_Click" />
             <MenuItem Cursor="Hand" Header="Add Face" Click="NewFaceButton_Click"/>
             <MenuItem Cursor="Hand" Header="Open Video File" Click="OpenVideoFile_Click"/>
+            <MenuItem Cursor="Hand" Header="Edit Name" Click="EditName_Click" />
+
         </Menu>
 
     </Grid>
