@@ -9,7 +9,7 @@ namespace FaceDetectionAndRecognition
     class User
     {
         public String TZ { get; set; }
-        public String Name { get; set; }
+        public String PersonName { get; set; }
 
     }
 }

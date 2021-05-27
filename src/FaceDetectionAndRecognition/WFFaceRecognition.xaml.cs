@@ -22,7 +22,7 @@ using FireSharp.Response;
 namespace FaceDetectionAndRecognition
 {
 
-    
+
     public partial class WFFaceRecognition : Window, INotifyPropertyChanged
     {
         #region Properties
@@ -44,15 +44,24 @@ namespace FaceDetectionAndRecognition
         {
             get { return faceTz; }
             set
-            {
-                //var result = client.Get("Users/" + txtId.Text);
-                //FaceData user = result.ResultAs<FaceData>();
+
+
+            {   //פה אנחנו עושים בדיקה אם פנים תז לא מופיע אצלו את שתיי המשפטים 
+                //אז תלך לפייר בייס ותימצא לפי התעודת זהות שיש ברשימה את השם שנימצא עם התעודת זהות
+                // שמצא לפי הפנים וכך מקבלים את אותו תעודת זהות
                 faceTz = value; // value - ערך משורה 285 FaceTz = nameList[result.Label]
-                var result = client.Get("User/" + faceTz);
-                //FaceData user = result.ResultAs<FaceData>();
-                //User user = result.ResultAs<User>();
-                lblFaceName.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => { lblFaceName.Content = faceTz; }));
-                NotifyPropertyChanged();
+                if (faceTz == "Please Add Face" || faceTz == "No face detected")
+                {
+                    lblFaceName.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => { lblFaceName.Content = faceTz; }));
+                    NotifyPropertyChanged();
+                }
+                else
+                {
+                    var result = client.Get("User/" + faceTz);
+                    User user = result.ResultAs<User>();
+                    lblFaceName.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => { lblFaceName.Content = user.PersonName; }));
+                    NotifyPropertyChanged();
+                }
             }
         }
         #endregion
@@ -95,7 +104,7 @@ namespace FaceDetectionAndRecognition
 
             };
             captureTimer.Elapsed += CaptureTimer_Elapsed;
-        }
+        }//כאן אנו מקשריים את הפייר בייס
         IFirebaseConfig fcon = new FirebaseConfig()
         {
             AuthSecret = "yfAOROgj22FDDAsmRD8b5BeFWUBr95oiOkPfTsut",
@@ -146,7 +155,7 @@ namespace FaceDetectionAndRecognition
             }
             //Save detected face
             detectedFace = detectedFace.Resize(100, 100, Inter.Cubic);
-            detectedFace.Save(Config.FacePhotosPath +"face"+ (faceList.Count + 1) + Config.ImageFileExtension);
+            detectedFace.Save(Config.FacePhotosPath + "face" + (faceList.Count + 1) + Config.ImageFileExtension);
             StreamWriter writer = new StreamWriter(Config.FaceListTextFile, true);
             string personName = Microsoft.VisualBasic.Interaction.InputBox("Your Name");
             string tz = Microsoft.VisualBasic.Interaction.InputBox("Your Teudat Zehut");
@@ -284,7 +293,7 @@ namespace FaceDetectionAndRecognition
                 //Eigen Face Algorithm
                 FaceRecognizer.PredictionResult result = recognizer.Predict(detectedFace.Resize(100, 100, Inter.Cubic));
                 FaceTz = nameList[result.Label]; //פה מכניסים למשתנה את הערך מהרשימה (nameList[result.Label])
-                var fbTZ = client.Get("User/" + nameList[result.Label]);
+                var fbTZ = client.Get("User/" + nameList[result.Label]);//באן אנו מעלים את התעודת זהות לתוך הפייר בייס
                 CameraCaptureFace = detectedFace.ToBitmap();
             }
             else
