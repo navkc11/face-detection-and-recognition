@@ -9,5 +9,13 @@
       Title="Edit Name" ResizeMode="NoResize" 
         SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" IsEnabled="True">
 
-    <Grid/>
+    <Grid>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="121,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Name="txtTZ"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="121,83,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Name="txtNewName"/>
+        <Border BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Left" Height="146" Margin="10,10,0,0" VerticalAlignment="Top" Width="263"/>
+
+        <Label Content="TZ:" HorizontalAlignment="Left" Margin="52,35,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.834,0.477"/>
+        <Label Content="new name:" HorizontalAlignment="Left" Margin="33,80,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.834,0.477"/>
+        <Button Content="Update" Name="btnUpdate" HorizontalAlignment="Left" Margin="162,122,0,0" VerticalAlignment="Top" Width="75" Click="btnUpdate_Click"/>
+    </Grid>
 </Window>
