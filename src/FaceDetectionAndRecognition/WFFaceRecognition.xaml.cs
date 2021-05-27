@@ -107,8 +107,8 @@ namespace FaceDetectionAndRecognition
         }//כאן אנו מקשריים את הפייר בייס
         IFirebaseConfig fcon = new FirebaseConfig()
         {
-            AuthSecret = "yfAOROgj22FDDAsmRD8b5BeFWUBr95oiOkPfTsut",
-            BasePath = "https://face-detection-1fc7d-default-rtdb.firebaseio.com/"
+            AuthSecret = "", //פה כותבים את ה secret שלכם
+            BasePath = "" //קישור לפייר בייס
         };
 
         IFirebaseClient client;
